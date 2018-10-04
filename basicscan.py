@@ -167,12 +167,12 @@ try:
                 for port in ports:
                     status =  scanport(port, protocol)
                     if status == True:
-            elif protocol == "UDP":
-		        print("Port " + str(port) + ": Open|Filtered")
-		        pdf.cell(200, 10, txt=("Port " + str(port) + ": Open|Filtered"), ln=1, align="L")
-			else:
-			    print("Port " + str(port) + ": Open")
-		            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open"), ln=1, align="L")
+                        if protocol == "UDP":
+                            print("Port " + str(port) + ": Open|Filtered")
+                            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open|Filtered"), ln=1, align="L")
+                        else:
+                            print("Port " + str(port) + ": Open")
+                            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open"), ln=1, align="L")
                         host_ports += 1
                         count_open += 1
                     else:
