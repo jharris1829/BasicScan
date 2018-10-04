@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--route", help="The IP address to be scanned, either single address or CIDR notation")
 parser.add_argument("-p", "--port", nargs="+", help="The port or range of ports to be scanned, if range separate by space")
 parser.add_argument("-f", "--file", action="store_true", help="Outputs PDF file if scan completes, default value is False")
+parser.add_argument("-i", "--input", type=argparse.FileType("r"), help="Specify a .txt file of ip addresses to scan")
 parser.add_argument('--protocol',
                     default='tcp',
                     const='tcp',
@@ -36,8 +37,12 @@ protocol = str(args.protocol.upper())
 try:
     if args.route:
         target = args.route
+    elif args.input:
+        for line in args.input:
+            ips.append(line.strip())
     else:
         target = input("Enter Target IP address: ")
+
     for ip in ipaddress.IPv4Network(unicode(args.route), "utf-8"):
         ips.append(ip)
     
@@ -113,8 +118,8 @@ def scanport(port, protocol):
         RSTpkt = IP(dst = target)/TCP(sport = srcport, dport = port, flags = "R")
         send(RSTpkt)
     elif protocol == "UDP":
-	if not SYNACKpkt:
-	    return True
+        if not SYNACKpkt:
+            return True
         elif SYNACKpkt.getlayer(ICMP).code == 3:
             return False
 
