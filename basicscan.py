@@ -167,9 +167,9 @@ try:
                 for port in ports:
                     status =  scanport(port, protocol)
                     if status == True:
-			if protocol == "UDP":
-		            print("Port " + str(port) + ": Open|Filtered")
-		            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open|Filtered"), ln=1, align="L")
+            elif protocol == "UDP":
+		        print("Port " + str(port) + ": Open|Filtered")
+		        pdf.cell(200, 10, txt=("Port " + str(port) + ": Open|Filtered"), ln=1, align="L")
 			else:
 			    print("Port " + str(port) + ": Open")
 		            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open"), ln=1, align="L")
