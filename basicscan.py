@@ -37,14 +37,13 @@ protocol = str(args.protocol.upper())
 try:
     if args.route:
         target = args.route
+        for ip in ipaddress.IPv4Network(unicode(args.route), "utf-8"):
+            ips.append(ip)
     elif args.input:
         for line in args.input:
             ips.append(line.strip())
     else:
         target = input("Enter Target IP address: ")
-
-    for ip in ipaddress.IPv4Network(unicode(args.route), "utf-8"):
-        ips.append(ip)
     
     if protocol == "ICMP":
         args.port = [0]
