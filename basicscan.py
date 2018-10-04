@@ -102,24 +102,21 @@ def scanport(port, protocol):
     if protocol == 'TCP':
         SYNACKpkt = sr1(IP(dst = target)/TCP(sport = srcport, dport = port, flags = "S"), timeout = 1)
     elif protocol == 'UDP':
-        SYNACKpkt = sr1(IP(dst = target)/UDP(sport = srcport, dport = port), timeout = 1)
+        SYNACKpkt = sr1(IP(dst = target)/UDP(dport = port), timeout = 1)
 
-    if SYNACKpkt is None:
-        return False
-    else:
-        if protocol == "TCP":
-            pktflags = SYNACKpkt.getlayer(TCP).flags
-            if pktflags == SYNACK:
-                return True
-            else:
-                return False
-            RSTpkt = IP(dst = target)/TCP(sport = srcport, dport = port, flags = "R")
-            send(RSTpkt)
-        elif protocol == "UDP":
-            if SYNACKpkt[0]:
-                return True
-            else:
-                return False
+    if protocol == "TCP":
+        pktflags = SYNACKpkt.getlayer(TCP).flags
+        if pktflags == SYNACK:
+            return True
+        else:
+            return False
+        RSTpkt = IP(dst = target)/TCP(sport = srcport, dport = port, flags = "R")
+        send(RSTpkt)
+    elif protocol == "UDP":
+	if not SYNACKpkt:
+	    return True
+        elif SYNACKpkt.getlayer(ICMP).code == 3:
+            return False
 
 try:
     count_open = 0
@@ -165,8 +162,12 @@ try:
                 for port in ports:
                     status =  scanport(port, protocol)
                     if status == True:
-                        print("Port " + str(port) + ": Open")
-                        pdf.cell(200, 10, txt=("Port " + str(port) + ": Open"), ln=1, align="L")
+			if protocol == "UDP":
+		            print("Port " + str(port) + ": Open|Filtered")
+		            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open|Filtered"), ln=1, align="L")
+			else:
+			    print("Port " + str(port) + ": Open")
+		            pdf.cell(200, 10, txt=("Port " + str(port) + ": Open"), ln=1, align="L")
                         host_ports += 1
                         count_open += 1
                     else:
