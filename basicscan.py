@@ -130,6 +130,7 @@ try:
     for ip in ips:
         resolved = checkhost(str(ip))
         host_ports = 0
+        target = ip
         if resolved:
             #Run traceroute if specified
             resolved_hosts += 1
